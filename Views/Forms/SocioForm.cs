@@ -1,15 +1,18 @@
 using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
-using ClubMinimal.Services;
-using ClubMinimal.Repositories;
 using ClubMinimal.Models;
-using System.Drawing; 
+using ClubMinimal.Repositories;
+using ClubMinimal.Services;
 
 namespace ClubMinimal.Views.Forms
 {
     public class SocioForm : Form
     {
         private readonly SocioService _socioService;
+        private readonly CuotaService _cuotaService;
         private readonly TextBox txtNombre;
         private readonly TextBox txtApellido;
         private readonly TextBox txtDni;
@@ -21,18 +24,18 @@ namespace ClubMinimal.Views.Forms
 
         public SocioForm()
         {
-            // Configuración inicial
             this.Text = "Gestión de Socios";
-            this.Width = 550;
-            this.Height = 550;
+            this.Width = 600;
+            this.Height = 600;
             this.StartPosition = FormStartPosition.CenterScreen;
 
-            // Inicialización de dependencias
             var dbHelper = new DatabaseHelper();
             var socioRepo = new SocioRepository(dbHelper);
-            _socioService = new SocioService(socioRepo);
+            var cuotaRepo = new CuotaRepository(dbHelper);
 
-            // Inicializar campos readonly 
+            _socioService = new SocioService(socioRepo);
+            _cuotaService = new CuotaService(cuotaRepo, socioRepo);
+
             txtNombre = new TextBox();
             txtApellido = new TextBox();
             txtDni = new TextBox();
@@ -42,147 +45,83 @@ namespace ClubMinimal.Views.Forms
             cmbTipoSocio = new ComboBox();
             listBox = new ListBox();
 
-            // Crear controles
             InitializeComponents();
         }
 
         private void InitializeComponents()
         {
-            // Configurar los controles ya inicializados
-            int topPosition = 20;
+            int top = 20;
+            int spacing = 35;
             int labelWidth = 150;
-            int controlLeft = labelWidth + 30;
-            int verticalSpacing = 35;
-            int controlWidth = 250;
+            int inputLeft = labelWidth + 30;
+            int inputWidth = 250;
 
-            // Configuración de controles
-            txtNombre.Left = controlLeft;
-            txtNombre.Top = topPosition;
-            txtNombre.Width = controlWidth;
+            // Controles de entrada
+            txtNombre.SetBounds(inputLeft, top, inputWidth, 20);
+            txtApellido.SetBounds(inputLeft, top + spacing, inputWidth, 20);
+            txtDni.SetBounds(inputLeft, top + spacing * 2, inputWidth, 20);
 
-            txtApellido.Left = controlLeft;
-            txtApellido.Top = topPosition + verticalSpacing;
-            txtApellido.Width = controlWidth;
-
-            txtDni.Left = controlLeft;
-            txtDni.Top = topPosition + verticalSpacing * 2;
-            txtDni.Width = controlWidth;
-
-            dtpFechaInscripcion.Left = controlLeft;
-            dtpFechaInscripcion.Top = topPosition + verticalSpacing * 3;
-            dtpFechaInscripcion.Width = controlWidth;
+            dtpFechaInscripcion.SetBounds(inputLeft, top + spacing * 3, inputWidth, 20);
             dtpFechaInscripcion.Format = DateTimePickerFormat.Short;
 
-            dtpFechaVencimiento.Left = controlLeft;
-            dtpFechaVencimiento.Top = topPosition + verticalSpacing * 4;
-            dtpFechaVencimiento.Width = controlWidth;
+            dtpFechaVencimiento.SetBounds(inputLeft, top + spacing * 4, inputWidth, 20);
             dtpFechaVencimiento.Format = DateTimePickerFormat.Short;
 
-            chkEstadoActivo.Left = controlLeft;
-            chkEstadoActivo.Top = topPosition + verticalSpacing * 5;
+            chkEstadoActivo.SetBounds(inputLeft, top + spacing * 5, inputWidth, 20);
             chkEstadoActivo.Text = "Activo";
             chkEstadoActivo.Checked = true;
-            chkEstadoActivo.Width = controlWidth;
 
-            cmbTipoSocio.Left = controlLeft;
-            cmbTipoSocio.Top = topPosition + verticalSpacing * 6;
-            cmbTipoSocio.Width = controlWidth;
+            cmbTipoSocio.SetBounds(inputLeft, top + spacing * 6, inputWidth, 21);
             cmbTipoSocio.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbTipoSocio.DataSource = Enum.GetValues(typeof(TipoSocio));
+            cmbTipoSocio.Items.AddRange(Enum.GetNames(typeof(TipoSocio)));
+            cmbTipoSocio.SelectedIndex = 0;
 
-            listBox.Left = 20;
-            listBox.Top = topPosition + verticalSpacing * 8;
-            listBox.Width = this.Width - 40;
-            listBox.Height = 180;
+            listBox.SetBounds(20, top + spacing * 9, this.Width - 40, 200);
 
-            // Etiquetas 
-            var lblNombre = new Label
-            {
-                Text = "Nombre:",
-                Left = 20,
-                Top = topPosition,
-                Width = labelWidth,
-                TextAlign = ContentAlignment.MiddleRight
-            };
-
-            var lblApellido = new Label
-            {
-                Text = "Apellido:",
-                Left = 20,
-                Top = topPosition + verticalSpacing,
-                Width = labelWidth,
-                TextAlign = ContentAlignment.MiddleRight
-            };
-
-            var lblDni = new Label
-            {
-                Text = "DNI:",
-                Left = 20,
-                Top = topPosition + verticalSpacing * 2,
-                Width = labelWidth,
-                TextAlign = ContentAlignment.MiddleRight
-            };
-
-            var lblFechaInscripcion = new Label
-            {
-                Text = "Fecha Inscripción:",
-                Left = 20,
-                Top = topPosition + verticalSpacing * 3,
-                Width = labelWidth,
-                TextAlign = ContentAlignment.MiddleRight
-            };
-
-            var lblFechaVencimiento = new Label
-            {
-                Text = "Vencimiento Primera Cuota:",
-                Left = 20,
-                Top = topPosition + verticalSpacing * 4,
-                Width = labelWidth,
-                TextAlign = ContentAlignment.MiddleRight
-            };
-
-            var lblTipoSocio = new Label
-            {
-                Text = "Tipo de Socio:",
-                Left = 20,
-                Top = topPosition + verticalSpacing * 6,
-                Width = labelWidth,
-                TextAlign = ContentAlignment.MiddleRight
-            };
+            // Etiquetas
+            this.Controls.Add(CreateLabel("Nombre:", top));
+            this.Controls.Add(CreateLabel("Apellido:", top + spacing));
+            this.Controls.Add(CreateLabel("DNI:", top + spacing * 2));
+            this.Controls.Add(CreateLabel("Fecha Inscripción:", top + spacing * 3));
+            this.Controls.Add(CreateLabel("Vencimiento Primera Cuota:", top + spacing * 4));
+            this.Controls.Add(CreateLabel("Tipo de Socio:", top + spacing * 6));
 
             // Botones
-            var btnGuardar = new Button
-            {
-                Text = "Guardar Socio",
-                Left = (this.Width / 2) - 140,
-                Top = topPosition + verticalSpacing * 7,
-                Width = 120
-            };
-
-            var btnListar = new Button
-            {
-                Text = "Ver Socios",
-                Left = (this.Width / 2) + 20,
-                Top = topPosition + verticalSpacing * 7,
-                Width = 120
-            };
-
-            // Eventos
+            var btnGuardar = new Button { Text = "Guardar Socio" };
+            btnGuardar.SetBounds(20, top + spacing * 7, 120, 30);
             btnGuardar.Click += btnGuardar_Click;
+
+            var btnListar = new Button { Text = "Ver Todos" };
+            btnListar.SetBounds(160, top + spacing * 7, 120, 30);
             btnListar.Click += btnListar_Click;
 
-            // Agregar controles al formulario 
+            var btnSociosVencidos = new Button { Text = "Socios Vencidos", BackColor = Color.LightCoral };
+            btnSociosVencidos.SetBounds(300, top + spacing * 7, 120, 30);
+            btnSociosVencidos.Click += BtnSociosVencidos_Click;
+
+            var btnSociosCuotas = new Button { Text = "Gestión Cuotas", BackColor = Color.LightGreen };
+            btnSociosCuotas.SetBounds(440, top + spacing * 7, 120, 30);
+            btnSociosCuotas.Click += BtnSociosCuotas_Click;
+
+            // Agregar controles
             this.Controls.AddRange(new Control[] {
-                lblNombre, txtNombre,
-                lblApellido, txtApellido,
-                lblDni, txtDni,
-                lblFechaInscripcion, dtpFechaInscripcion,
-                lblFechaVencimiento, dtpFechaVencimiento,
-                chkEstadoActivo,
-                lblTipoSocio, cmbTipoSocio,
-                btnGuardar, btnListar,
-                listBox
+                txtNombre, txtApellido, txtDni,
+                dtpFechaInscripcion, dtpFechaVencimiento,
+                chkEstadoActivo, cmbTipoSocio, listBox,
+                btnGuardar, btnListar, btnSociosVencidos, btnSociosCuotas
             });
+        }
+
+        private Label CreateLabel(string text, int top)
+        {
+            return new Label
+            {
+                Text = text,
+                Left = 20,
+                Top = top,
+                Width = 150,
+                TextAlign = ContentAlignment.MiddleRight
+            };
         }
 
         private void btnGuardar_Click(object sender, EventArgs e)
@@ -191,13 +130,16 @@ namespace ClubMinimal.Views.Forms
                 !string.IsNullOrWhiteSpace(txtApellido.Text) &&
                 !string.IsNullOrWhiteSpace(txtDni.Text))
             {
-                // Validar que el DNI no exista usando el nuevo método
                 if (_socioService.ExisteDni(txtDni.Text))
                 {
                     MessageBox.Show("El DNI ingresado ya está registrado. Por favor ingrese un DNI diferente.");
                     txtDni.Focus();
                     return;
                 }
+
+                var tipoNombre = cmbTipoSocio.SelectedItem.ToString();
+                TipoSocio tipo;
+                Enum.TryParse(tipoNombre, out tipo);
 
                 var nuevoSocio = new Socio
                 {
@@ -207,7 +149,7 @@ namespace ClubMinimal.Views.Forms
                     FechaInscripcion = dtpFechaInscripcion.Value,
                     FechaVencimientoCuota = dtpFechaVencimiento.Value,
                     EstadoActivo = chkEstadoActivo.Checked,
-                    Tipo = (TipoSocio)cmbTipoSocio.SelectedValue
+                    Tipo = tipo
                 };
 
                 _socioService.RegistrarSocio(nuevoSocio);
@@ -222,18 +164,35 @@ namespace ClubMinimal.Views.Forms
 
         private void btnListar_Click(object sender, EventArgs e)
         {
+            CargarSocios(_socioService.ObtenerSocios());
+        }
+
+        private void BtnSociosVencidos_Click(object sender, EventArgs e)
+        {
+            var sociosVencidos = _cuotaService.ObtenerSociosConCuotasVencidas(DateTime.Today);
+            CargarSocios(sociosVencidos);
+        }
+
+        private void BtnSociosCuotas_Click(object sender, EventArgs e)
+        {
+            var formCuotas = new SociosConCuotasForm(_cuotaService);
+            formCuotas.ShowDialog();
+        }
+
+        private void CargarSocios(IEnumerable<Socio> socios)
+        {
             listBox.Items.Clear();
-            var socios = _socioService.ObtenerSocios();
-            foreach (var socio in socios)
+            foreach (var socio in socios.OrderBy(s => s.Apellido).ThenBy(s => s.Nombre))
             {
-                listBox.Items.Add(string.Format("{0}: {1}, {2} - DNI: {3} - Tipo: {4} - Vencimiento: {5} - Estado: {6}",
-                    socio.Id,
+                string estadoCuota = socio.FechaVencimientoCuota < DateTime.Today ? "VENCIDO" : "AL DÍA";
+                string texto = string.Format("{0}, {1} - DNI: {2} | Vence: {3} ({4})",
                     socio.Apellido,
                     socio.Nombre,
                     socio.Dni,
-                    socio.Tipo,
-                    socio.FechaVencimientoCuota.ToShortDateString(),
-                    socio.EstadoActivo ? "Activo" : "Inactivo"));
+                    socio.FechaVencimientoCuota.ToString("dd/MM/yyyy"),
+                    estadoCuota);
+
+                listBox.Items.Add(texto);
             }
         }
 

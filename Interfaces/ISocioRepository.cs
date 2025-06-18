@@ -10,5 +10,6 @@ namespace ClubMinimal.Interfaces
         List<Socio> ObtenerTodos();
         Socio ObtenerPorId(int id);
         Socio ObtenerPorDni(string Dni);
+	//IEnumerable<Socio> ObtenerTodos();
     }
 }
