@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using ClubMinimal.Services;
 using ClubMinimal.Repositories;
 using ClubMinimal.Models;
-using System.Drawing; // Añadir este using para ContentAlignment
+using System.Drawing; 
 
 namespace ClubMinimal.Views.Forms
 {
@@ -32,7 +32,7 @@ namespace ClubMinimal.Views.Forms
             var socioRepo = new SocioRepository(dbHelper);
             _socioService = new SocioService(socioRepo);
 
-            // Inicializar los campos readonly aquí
+            // Inicializar campos readonly 
             txtNombre = new TextBox();
             txtApellido = new TextBox();
             txtDni = new TextBox();
@@ -95,7 +95,7 @@ namespace ClubMinimal.Views.Forms
             listBox.Width = this.Width - 40;
             listBox.Height = 180;
 
-            // Etiquetas - versión corregida
+            // Etiquetas 
             var lblNombre = new Label
             {
                 Text = "Nombre:",
@@ -249,61 +249,3 @@ namespace ClubMinimal.Views.Forms
         }
     }
 }
-/*
----------->CODIGO COMENTADO POR IA DESACTUALIZADO <--------
-Este código implementa un formulario de Windows Forms para gestionar socios de un club. Vamos a analizarlo por partes:
-Estructura General
-- **Namespace**: `ClubMinimal.Views.Forms` - Organiza el formulario dentro de la estructura del proyecto
-- **Clase**: `SocioForm` hereda de `Form` - Crea una ventana de aplicación Windows
-
-## Componentes Principales
-
-### Campos
-- `_socioService`: Servicio que maneja la lógica de negocio para socios
-- `txtNombre`, `txtApellido`: Cuadros de texto para ingresar datos del socio
-- `listBox`: Muestra la lista de socios registrados
-
-### Constructor
-1. Configura propiedades básicas del formulario (título, tamaño, posición)
-2. Inicializa las dependencias:
-   - `DatabaseHelper`: Maneja conexión a base de datos
-   - `SocioRepository`: Capa de acceso a datos
-   - `SocioService`: Capa de servicio que usa el repositorio
-3. Inicializa los controles
-4. Llama a `InitializeComponents()` para configurar la interfaz
-
-### Método InitializeComponents()
-Configura todos los controles visuales:
-- Posición y tamaño de los TextBox y ListBox
-- Crea etiquetas (Label) para Nombre y Apellido
-- Crea botones para Guardar y Listar socios
-- Asigna manejadores de eventos a los botones
-- Agrega todos los controles al formulario
-
-### Eventos
-1. **btnGuardar_Click**:
-   - Valida que los campos no estén vacíos
-   - Llama al servicio para registrar el socio
-   - Muestra mensaje de confirmación
-   - Limpia los campos de texto
-
-2. **btnListar_Click**:
-   - Limpia el ListBox
-   - Obtiene todos los socios del servicio
-   - Agrega cada socio al ListBox en formato "ID: Nombre Apellido"
-
-## Flujo de Trabajo
-1. El usuario ingresa nombre y apellido
-2. Al hacer clic en "Guardar Socio", se registra en la base de datos
-3. Al hacer clic en "Ver Socios", se muestran todos los registros
-
-## Arquitectura
-Sigue un patrón de diseño por capas:
-- **Vista**: El formulario (SocioForm)
-- **Servicio**: SocioService (lógica de negocio)
-- **Repositorio**: SocioRepository (acceso a datos)
-- **Helpers**: DatabaseHelper (gestión de conexión)
-
-Este diseño permite separar responsabilidades y facilita mantenimiento y pruebas.
-
-**/

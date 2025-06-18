@@ -10,10 +10,7 @@ namespace ClubMinimal.Views.Forms
           
             private System.ComponentModel.IContainer components = null;
 
-            /*/// <summary>
-            /// Clean up any resources being used.
-            /// </summary>
-            /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>*/
+          
             protected override void Dispose(bool disposing)
             {
                 if (disposing && (components != null))
@@ -23,9 +20,7 @@ namespace ClubMinimal.Views.Forms
                 base.Dispose(disposing);
             }
 
-            /*#region Windows Form Designer generated code*/
-
-            
+                       
             private void InitializeComponent()
             {
                 this.lblNombre = new System.Windows.Forms.Label();
@@ -182,8 +177,6 @@ namespace ClubMinimal.Views.Forms
                 this.PerformLayout();
 
             }
-
-            /*#endregion*/
 
             private System.Windows.Forms.Label lblNombre;
             private System.Windows.Forms.TextBox txtNombre;

@@ -15,7 +15,7 @@ namespace ClubMinimal.Services
             _repository = repository;
         }
 
-        // Versión original mantenida por compatibilidad
+        // Versión original 
         public void RegistrarSocio(string nombre, string apellido, string dni)
         {
             var socio = new Socio
@@ -31,7 +31,7 @@ namespace ClubMinimal.Services
             _repository.Agregar(socio);
         }
 
-        // Nueva versión que acepta un objeto Socio completo
+        // Nueva versión acepta un objeto Socio completo
         public void RegistrarSocio(Socio socio)
         {
             //if (socio == null) throw new ArgumentNullException(nameof(socio));
@@ -79,7 +79,7 @@ namespace ClubMinimal.Services
             return _repository.ObtenerPorDni(dni) != null;
         }
 
-        // Métodos nuevos
+       
         public Socio ObtenerSocioPorId(int id)
         {
             return _repository.ObtenerPorId(id);

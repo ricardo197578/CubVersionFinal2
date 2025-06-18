@@ -26,30 +26,45 @@ namespace ClubMinimal.Repositories
                         FechaPago TEXT NOT NULL,
                         FechaVencimiento TEXT NOT NULL,
                         Pagada INTEGER NOT NULL,
-                        Metodo INTEGER NOT NULL,
+                        MetodoPago INTEGER NOT NULL,
                         Periodo TEXT NOT NULL,
                         FOREIGN KEY(SocioId) REFERENCES Socios(Id))";
             _dbHelper.ExecuteNonQuery(sql);
         }
 
-        public void RegistrarPagoCuota(int socioId, decimal monto, DateTime fechaPago, 
-                                     DateTime fechaVencimiento, MetodoPago metodo)
-        {
-            var sql = @"INSERT INTO Cuotas 
-                        (SocioId, Monto, FechaPago, FechaVencimiento, Pagada, Metodo, Periodo) 
-                        VALUES 
-                        (@socioId, @monto, @fechaPago, @fechaVencimiento, 1, @metodo, @periodo)";
+   public void RegistrarPagoCuota(int socioId, decimal monto, DateTime fechaPago, 
+                             MetodoPago metodo) 
+{
+    // Obtener la fecha actual del socio
+    DateTime fechaVencimientoActual = ObtenerFechaVencimientoActual(socioId);
+    
+    // 1. Registrar el pago en la tabla Cuotas
+    var sqlInsert = @"INSERT INTO Cuotas 
+                    (SocioId, Monto, FechaPago, FechaVencimiento, Pagada, MetodoPago, Periodo) 
+                    VALUES 
+                    (@socioId, @monto, @fechaPago, @fechaVencimiento, 1, @metodo, @periodo)";
 
-            _dbHelper.ExecuteNonQuery(sql,
-                new SQLiteParameter("@socioId", socioId),
-                new SQLiteParameter("@monto", monto),
-                new SQLiteParameter("@fechaPago", fechaPago.ToString("yyyy-MM-dd")),
-                new SQLiteParameter("@fechaVencimiento", fechaVencimiento.ToString("yyyy-MM-dd")),
-                new SQLiteParameter("@metodo", (int)metodo),
-                new SQLiteParameter("@periodo", fechaVencimiento.ToString("yyyy-MM")));
-        }
+    _dbHelper.ExecuteNonQuery(sqlInsert,
+        new SQLiteParameter("@socioId", socioId),
+        new SQLiteParameter("@monto", monto),
+        new SQLiteParameter("@fechaPago", fechaPago.ToString("yyyy-MM-dd")),
+        new SQLiteParameter("@fechaVencimiento", fechaVencimientoActual.ToString("yyyy-MM-dd")),
+        new SQLiteParameter("@metodo", (int)metodo),
+        new SQLiteParameter("@periodo", fechaVencimientoActual.ToString("yyyy-MM")));
 
-        // Implementación de los demás métodos de la interfaz
+    // 2. Calcular nuevo vencimiento (30 días después del actual)
+   ActualizarFechaVencimiento(socioId, fechaVencimientoActual.AddDays(30));
+    
+    // 3. Actualizar la fecha en la tabla Socios
+    //ActualizarFechaVencimiento(socioId, nuevoVencimiento);
+
+    // 4. Activar al socio si estaba inactivo
+    ActivarSocio(socioId);
+}
+
+       
+
+       
         public Socio BuscarSocioActivoPorDni(string dni)
         {
             var sql = @"SELECT Id, Nombre, Apellido, Dni, FechaInscripcion, 

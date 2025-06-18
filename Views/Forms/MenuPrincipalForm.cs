@@ -63,7 +63,7 @@ namespace ClubMinimal.Views.Forms
             var btnGestionActividades = CreateButton("Gestión de Actividades", 190);          
             var btnPagoActividades = CreateButton("Pago de Actividades", 230);
             //var btnBuscarPorDni = CreateButton("Buscar Socio por DNI", 270);
-            var btnVencimientosDiarios = CreateButton("Vencimientos Diarios", 310);
+           
            
 
             var btnSalir = CreateButton("Salir", 340); 
@@ -79,9 +79,7 @@ namespace ClubMinimal.Views.Forms
                                         _pagoService).ShowDialog();
             btnGestionActividades.Click += (s, e) => new frmActividad(_actividadRepository).ShowDialog();
             btnPagoCuota.Click += (s, e) => new PagoCuotaForm(_cuotaService, _cuotaRepository).ShowDialog();
-            
-		btnVencimientosDiarios.Click += (s, e) => new VencimientosDiariosForm(_cuotaService).ShowDialog();
-	    btnSalir.Click += (s, e) => this.Close();
+            btnSalir.Click += (s, e) => this.Close();
 
             this.Controls.AddRange(new Control[] {
                 btnSocios,
@@ -91,7 +89,7 @@ namespace ClubMinimal.Views.Forms
                 btnPagoActividades,
                 btnGestionActividades, 
                 btnPagoCuota,
-                btnVencimientosDiarios,
+              
                 btnSalir
             });
         }

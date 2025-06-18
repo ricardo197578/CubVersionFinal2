@@ -33,38 +33,37 @@ namespace ClubMinimal.Services
 
             return _cuotaRepository.BuscarSocioActivoPorDni(dni.Trim());
         }
+public void ProcesarPago(int socioId, decimal monto, MetodoPago metodo)
+{                   
+    if (monto != _valorCuota)
+        throw new ArgumentException(string.Format("El monto debe ser exactamente {0:C}", _valorCuota));
 
-        public void ProcesarPago(int socioId, decimal monto, MetodoPago metodo)
-        {                   
-            if (monto != _valorCuota)
-                throw new ArgumentException(string.Format("El monto debe ser exactamente {0:C}", _valorCuota));
+    using (var transaction = new TransactionScope())
+    {
+        try
+        {
+            //  el repository maneja internamente las fechas
+            _cuotaRepository.RegistrarPagoCuota(
+                socioId: socioId,
+                monto: monto,
+                fechaPago: DateTime.Now,
+                metodo: metodo);
 
-            var nuevaFechaVencimiento = CalcularNuevoVencimiento(socioId);
+            // Obtenemos la nueva fecha 
+            DateTime nuevaFechaVencimiento = _cuotaRepository.ObtenerFechaVencimientoActual(socioId);
+            
+           
 
-            using (var transaction = new TransactionScope())
-            {
-                try
-                {
-                    _cuotaRepository.RegistrarPagoCuota(
-                        socioId: socioId,
-                        monto: monto,
-                        fechaPago: DateTime.Now,
-                        fechaVencimiento: nuevaFechaVencimiento,
-                        metodo: metodo);
-
-                    _cuotaRepository.ActualizarFechaVencimiento(socioId, nuevaFechaVencimiento);
-                    _cuotaRepository.ActivarSocio(socioId);
-
-                    transaction.Complete();
-                }
-                catch
-                {
-                    transaction.Dispose();
-                    throw;
-                }
-            }
-        }    
-    
+            transaction.Complete();
+        }
+        catch
+        {
+            transaction.Dispose();
+            throw;
+        }
+    }
+}
+       
         public decimal ObtenerValorCuota()
         {
             return _valorCuota;

@@ -11,7 +11,7 @@ namespace ClubMinimal.Models
         public DateTime FechaVencimiento { get; set; }
         public bool Pagada { get; set; }
         public MetodoPago Metodo { get; set; }
-        public string Periodo { get; set; } // Ejemplo: "2024-05" para mayo 2024
+        public string Periodo { get; set; } 
 
         // Constructor para facilitar la creación
         public Cuota() { }

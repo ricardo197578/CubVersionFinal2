@@ -10,10 +10,10 @@ namespace ClubMinimal.Models
         public bool EstadoActivo { get; set; }
         public TipoSocio Tipo { get; set; } // por ahora un enum ver abajo
 
-        // Constructor por defecto
+        
         public Socio()
         {
-            EstadoActivo = true; // Inicialización por defecto en el constructor
+            EstadoActivo = true; 
         }
 
         // Constructor con parámetros

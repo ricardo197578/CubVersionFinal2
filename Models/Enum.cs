@@ -1,6 +1,5 @@
-// Models/Enums.cs
-
 using System;
+
 namespace ClubMinimal.Models
 {
     public enum MetodoPago

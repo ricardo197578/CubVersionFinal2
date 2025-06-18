@@ -18,22 +18,3 @@ namespace ClubMinimal.Interfaces
     }
 }
 
-/*
-// Interfaces/ISocioService.cs
-using ClubMinimal.Models;
-using System.Collections.Generic;
-
-namespace ClubMinimal.Interfaces
-{
-    public interface ISocioService
-    {
-        void RegistrarSocio(string nombre, string apellido, string dni, TipoSocio tipo);
-        List<Socio> ObtenerSocios();
-        Socio GetSocio(int id);
-        Socio GetSocio(string dni);
-        bool ExisteDni(string dni);
-        Socio ObtenerSocioPorId(int id);
-        void ActualizarVencimientoCuota(int socioId, DateTime nuevaFechaVencimiento);
-    }
-}
-*/
