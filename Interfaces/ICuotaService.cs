@@ -8,7 +8,6 @@ namespace ClubMinimal.Interfaces
         Socio BuscarSocio(string dni);
         void ProcesarPago(int socioId, decimal monto, MetodoPago metodo);
         decimal ObtenerValorCuota();
-        // En ICuotaService.cs
-	Socio BuscarSocioPorId(int socioId);
+        Socio BuscarSocioPorId(int socioId);
     }
 }

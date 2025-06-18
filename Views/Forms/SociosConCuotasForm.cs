@@ -115,12 +115,12 @@ namespace ClubMinimal.Views.Forms
 }
 
         }
-
+        //completar
         private void BtnVerDetalle_Click(object sender, EventArgs e)
         {
             if (listBoxSocios.SelectedItem != null)
             {
-                // Implementar lógica para ver detalle del socio seleccionado
+                
                 MessageBox.Show("Detalle del socio seleccionado", "Detalle", 
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }

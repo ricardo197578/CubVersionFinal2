@@ -31,7 +31,7 @@ namespace ClubMinimal.Services
             _repository.Agregar(socio);
         }
 
-        // Nueva versión acepta un objeto Socio completo
+        // Nueva versión acepta objeto Socio completo
         public void RegistrarSocio(Socio socio)
         {
             //if (socio == null) throw new ArgumentNullException(nameof(socio));
